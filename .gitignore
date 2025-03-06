@@ -50,3 +50,12 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+#STMCubeIDE Generated Content
+*/.settings
+*/Debug
+*/Drivers
+*/Middlewares
+*/USB_DEVICE
+*.ld
+*.launch
