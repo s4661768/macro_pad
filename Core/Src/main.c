@@ -35,6 +35,8 @@
 #include "task.h"
 #include "queue.h"
 #include "event_groups.h"
+
+#include "frames.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -60,6 +62,7 @@ osThreadId defaultTaskHandle;
 osThreadId UsbSendTaskHandle;
 /* USER CODE BEGIN PV */
 extern USBD_HandleTypeDef hUsbDeviceFS;
+//extern uint8_t frames;
 
 
 
@@ -735,7 +738,7 @@ void s4661768TaskOled() {
 	uint8_t currentState = OLED_INIT_STATE;
 	uint8_t nextState = OLED_INIT_STATE;
 
-
+	uint8_t frameCount = 0;
 	Oled oledState; // Initialise Oled struct
 
 	for (;;) {
@@ -749,8 +752,13 @@ void s4661768TaskOled() {
 		} else if (currentState == OLED_BLOCKED_STATE) {
 			if (OledQueue == NULL) { continue; } // If queue doesn't exist continue through loop.
 
-			if (xQueueReceive(OledQueue, &oledState, 5)) { // Receive from queue.
+			if (xQueueReceive(OledQueue, &oledState, 5)) { // Received from queue.
 				nextState = OLED_UPDATE_STATE;
+			} else {
+				ssd1306_Fill(Black);
+				ssd1306_DrawBitmap(32, 0, frames[frameCount], FRAME_WIDTH, FRAME_HEIGHT, White);
+				frameCount = (frameCount + 1) % FRAME_COUNT;
+				ssd1306_UpdateScreen();
 			}
 
 		} else if (currentState == OLED_UPDATE_STATE) {
