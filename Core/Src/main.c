@@ -487,18 +487,21 @@ void set_keystroke(EventBits_t key, KeystrokeReport* keystrokeReport, uint8_t la
 		switch (key) {
 
 			case KEY0:
-				keystrokeReport->mod = 0x02;
-				keystrokeReport->k1 = 0x04;
+//				keystrokeReport->mod = 0x02;
+//				keystrokeReport->k1 = 0x04;
+				keystrokeReport->k1 = 0x56;
 				break;
 
 			case KEY1:
 				keystrokeReport->mod = 0x02;
-				keystrokeReport->k1 = 0x05;
+//				keystrokeReport->k1 = 0x05;
+				keystrokeReport->k1 = 0x56;
 				break;
 
 			case KEY2:
-				keystrokeReport->mod = 0x02;
-				keystrokeReport->k1 = 0x06;
+//				keystrokeReport->mod = 0x02;
+//				keystrokeReport->k1 = 0x06;
+				keystrokeReport->k1 = 0x81;
 				break;
 
 			case KEY4:
@@ -745,37 +748,26 @@ void s4661768TaskOled() {
 
 		if (currentState == OLED_INIT_STATE) {
 			OledQueue = xQueueCreate(4, sizeof(Oled));
-//			s4661768_reg_oled_init();
 			ssd1306_Init();	//Initialise SSD1306 OLED.
 			nextState = OLED_BLOCKED_STATE;
-
 		} else if (currentState == OLED_BLOCKED_STATE) {
-			if (OledQueue == NULL) { continue; } // If queue doesn't exist continue through loop.
-
 			if (xQueueReceive(OledQueue, &oledState, 5)) { // Received from queue.
 				nextState = OLED_UPDATE_STATE;
-			} else {
-				ssd1306_Fill(Black);
-				ssd1306_DrawBitmap(32, 0, frames[frameCount], FRAME_WIDTH, FRAME_HEIGHT, White);
-				frameCount = (frameCount + 1) % FRAME_COUNT;
-				ssd1306_UpdateScreen();
 			}
-
+			ssd1306_Fill(Black);
+			ssd1306_DrawBitmap(32, 32, frames[frameCount], FRAME_WIDTH, FRAME_HEIGHT, White);
+			frameCount = (frameCount + 1) % FRAME_COUNT;
+			ssd1306_UpdateScreen();
 		} else if (currentState == OLED_UPDATE_STATE) {
-			if (OledQueue == NULL) { continue; }
-
-			taskENTER_CRITICAL();
-			if (oledState.clear == 1) { // Clearing screen.
-				ssd1306_Fill(Black);
+			ssd1306_Fill(Black);
+			if (xQueueReceive(OledQueue, &oledState, 5)) { // Received from queue.
+				nextState = OLED_UPDATE_STATE;
 			}
-
 			/* Checking if there is string to display. */
 			if ((oledState.stringCoords[0] != -1) && (oledState.stringCoords[1] != -1)) {
 				ssd1306_SetCursor(oledState.stringCoords[0], oledState.stringCoords[1]);
 				ssd1306_WriteString(oledState.string, Font_6x8, White);
 			}
-
-			/* Making sure OLED.lines array is formatted correctly. */
 			if ((oledState.linesLength != 0) && (oledState.linesLength % 4 == 0)) {
 
 				/* Drawing lines. */
@@ -789,12 +781,12 @@ void s4661768TaskOled() {
 
 			}
 
-			if (oledState.update == 1) { // Update screen
-				ssd1306_UpdateScreen();
-			}
-			taskEXIT_CRITICAL();
-			nextState = OLED_BLOCKED_STATE;
+			ssd1306_DrawBitmap(32, 32, frames[frameCount], FRAME_WIDTH, FRAME_HEIGHT, White);
+//			ssd1306_DrawBitmap(32, 16, frames[frameCount], FRAME_WIDTH, FRAME_HEIGHT, White);
+			frameCount = (frameCount + 1) % FRAME_COUNT;
+			ssd1306_UpdateScreen();
 		}
+
 		currentState = nextState;
 	}
 }
@@ -817,7 +809,9 @@ void StartDefaultTask(void const * argument)
 	KeystrokeReport keystrokeReport;
 	Oled oledStruct;
 	clear_keystroke_report(&keystrokeReport);
-	char oledMsg[8];
+	char oledMsg[21];
+	uint8_t lines[12] = {0, 11, 127, 11,
+					 84, 0, 84, 10};
 	uint8_t welcome = 1;
 
 	/* Infinite loop */
@@ -870,10 +864,13 @@ void StartDefaultTask(void const * argument)
 		  xQueueSend(OledQueue, &oledStruct, 1);
 
 		  memset(oledMsg, '\0', sizeof(oledMsg));
-		  sprintf(oledMsg, "Layer %d", layer);
+		  sprintf(oledMsg, "L%d: Media     v0.0.1", layer);
 		  oledStruct.string = oledMsg;
-		  oledStruct.stringCoords[0] = 15;
-		  oledStruct.stringCoords[1] = 10;
+		  oledStruct.stringCoords[0] = 5;
+		  oledStruct.stringCoords[1] = 0;
+
+		  oledStruct.lines = lines;
+		  oledStruct.linesLength = 8;
 
 		  oledStruct.update = 1;
 		  xQueueSend(OledQueue, &oledStruct, 1);
