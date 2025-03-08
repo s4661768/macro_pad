@@ -55,7 +55,6 @@ dkms.conf
 .settings/
 Debug/
 Drivers/
-Middlewares/
 USB_DEVICE/
 *.ld
 *.launch

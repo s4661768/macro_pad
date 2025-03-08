@@ -425,6 +425,10 @@ void build_msg(KeystrokeReport* keystrokeReport) {
 
 
 void set_keystroke(EventBits_t key, KeystrokeReport* keystrokeReport, uint8_t layer) {
+	uint8_t mute[1] = {0xE2};
+	uint8_t vol_up[1] = {0xE9};
+	uint8_t vol_down[1] = {0xEA};
+	uint8_t stop[1] = {0x00};
 
 	if (layer == 0) {
 
@@ -489,19 +493,27 @@ void set_keystroke(EventBits_t key, KeystrokeReport* keystrokeReport, uint8_t la
 			case KEY0:
 //				keystrokeReport->mod = 0x02;
 //				keystrokeReport->k1 = 0x04;
-				keystrokeReport->k1 = 0x56;
+//				keystrokeReport->k1 = 0xE2;
+
+
+				USBD_HID_SendReport(&hUsbDeviceFS, mute, sizeof(mute));
+				USBD_HID_SendReport(&hUsbDeviceFS, stop, sizeof(stop));
 				break;
 
 			case KEY1:
-				keystrokeReport->mod = 0x02;
+//				keystrokeReport->mod = 0x02;
 //				keystrokeReport->k1 = 0x05;
-				keystrokeReport->k1 = 0x56;
+//				keystrokeReport->k1 = 0xE9;
+				USBD_HID_SendReport(&hUsbDeviceFS, vol_up, sizeof(vol_up));
+				USBD_HID_SendReport(&hUsbDeviceFS, stop, sizeof(stop));
 				break;
 
 			case KEY2:
 //				keystrokeReport->mod = 0x02;
 //				keystrokeReport->k1 = 0x06;
-				keystrokeReport->k1 = 0x81;
+//				keystrokeReport->k1 = 0xEA;
+				USBD_HID_SendReport(&hUsbDeviceFS, vol_down, sizeof(vol_down));
+				USBD_HID_SendReport(&hUsbDeviceFS, stop, sizeof(stop));
 				break;
 
 			case KEY4:
