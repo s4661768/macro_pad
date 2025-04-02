@@ -425,10 +425,10 @@ void build_msg(KeystrokeReport* keystrokeReport) {
 
 
 void set_keystroke(EventBits_t key, KeystrokeReport* keystrokeReport, uint8_t layer) {
-	uint8_t mute[1] = {0xE2};
-	uint8_t vol_up[1] = {0xE9};
-	uint8_t vol_down[1] = {0xEA};
-	uint8_t stop[1] = {0x00};
+	uint8_t mute[2] = {0x03, 0x10};
+	uint8_t vol_up[2] = {0x03, 0x20};
+	uint8_t vol_down[2] = {0x03, 0x40};
+	uint8_t stop[2] = {0x03, 0x00};
 
 	if (layer == 0) {
 
