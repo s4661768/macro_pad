@@ -391,7 +391,17 @@ void clear_keystroke_report(KeystrokeReport* keystrokeReport) {
  */
 void clear_msg(KeystrokeReport* keystrokeReport) {
 
-	keystrokeReport->msg[0] = 0;
+//	keystrokeReport->msg[0] = 0;
+//	keystrokeReport->msg[1] = 0;
+//	keystrokeReport->msg[2] = 0;
+//	keystrokeReport->msg[3] = 0;
+//	keystrokeReport->msg[4] = 0;
+//	keystrokeReport->msg[5] = 0;
+//	keystrokeReport->msg[6] = 0;
+//	keystrokeReport->msg[7] = 0;
+
+
+
 	keystrokeReport->msg[1] = 0;
 	keystrokeReport->msg[2] = 0;
 	keystrokeReport->msg[3] = 0;
@@ -399,6 +409,7 @@ void clear_msg(KeystrokeReport* keystrokeReport) {
 	keystrokeReport->msg[5] = 0;
 	keystrokeReport->msg[6] = 0;
 	keystrokeReport->msg[7] = 0;
+	keystrokeReport->msg[8] = 0;
 
 }
 
@@ -412,14 +423,24 @@ void clear_msg(KeystrokeReport* keystrokeReport) {
  */
 void build_msg(KeystrokeReport* keystrokeReport) {
 
-	keystrokeReport->msg[0] = keystrokeReport->mod;
-	keystrokeReport->msg[1] = keystrokeReport->res;
-	keystrokeReport->msg[2] = keystrokeReport->k1;
-	keystrokeReport->msg[3] = keystrokeReport->k2;
-	keystrokeReport->msg[4] = keystrokeReport->k3;
-	keystrokeReport->msg[5] = keystrokeReport->k4;
-	keystrokeReport->msg[6] = keystrokeReport->k5;
-	keystrokeReport->msg[7] = keystrokeReport->k6;
+//	keystrokeReport->msg[0] = keystrokeReport->mod;
+//	keystrokeReport->msg[1] = keystrokeReport->res;
+//	keystrokeReport->msg[2] = keystrokeReport->k1;
+//	keystrokeReport->msg[3] = keystrokeReport->k2;
+//	keystrokeReport->msg[4] = keystrokeReport->k3;
+//	keystrokeReport->msg[5] = keystrokeReport->k4;
+//	keystrokeReport->msg[6] = keystrokeReport->k5;
+//	keystrokeReport->msg[7] = keystrokeReport->k6;
+
+	keystrokeReport->msg[0] = KEYBOARD_REPORT_ID;
+ 	keystrokeReport->msg[1] = keystrokeReport->mod;
+	keystrokeReport->msg[2] = keystrokeReport->res;
+	keystrokeReport->msg[3] = keystrokeReport->k1;
+	keystrokeReport->msg[4] = keystrokeReport->k2;
+	keystrokeReport->msg[5] = keystrokeReport->k3;
+	keystrokeReport->msg[6] = keystrokeReport->k4;
+	keystrokeReport->msg[7] = keystrokeReport->k5;
+	keystrokeReport->msg[8] = keystrokeReport->k6;
 
 }
 
@@ -436,12 +457,6 @@ void set_keystroke(EventBits_t key, KeystrokeReport* keystrokeReport, uint8_t la
 
 			case KEY0:
 				keystrokeReport->k1 = 0x04;
-				//	  	 		 keystrokeReport.k2 = 0x05;
-				//	  	 		 keystrokeReport.k3 = 0x06;
-				//	  	 		 keystrokeReport.k4 = 0x00;
-				//	  	 		 keystrokeReport.k5 = 0x00;
-				//	  	 		 keystrokeReport.k6 = 0x00;
-				//	  	 		{ 0x02, 0, 0x04, 0x05, 0x06, 0, 0, 0};
 				break;
 
 			case KEY1:
@@ -911,6 +926,8 @@ void StartDefaultTask(void const * argument)
 	clear_keystroke_report(&keystrokeReport);
 	build_msg(&keystrokeReport);
 	xQueueSend(UsbQueue, &keystrokeReport.msg, 5);
+	osDelay(10); // Wait and send again just in case packet was missed.
+	xQueueSend(UsbQueue, &keystrokeReport.msg, 5);
 	}
   /* USER CODE END 5 */
 }
@@ -927,7 +944,7 @@ void UsbSendTaskInit(void const * argument)
   /* USER CODE BEGIN UsbSendTaskInit */
 
 	UsbQueue = xQueueCreate(4, 8);
-	uint8_t msg[8] = {0};
+	uint8_t msg[REPORT_SIZE] = {0};
   /* Infinite loop */
   for(;;) {
 

@@ -40,6 +40,9 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+
+#define KEYBOARD_REPORT_ID 0x01
+#define REPORT_SIZE 9
 typedef struct KeystrokeReport{
 
 	uint8_t mod;
@@ -51,7 +54,7 @@ typedef struct KeystrokeReport{
 	uint8_t k5;
 	uint8_t k6;
 
-	uint8_t msg[8]; // Outgoing message to USB interface task
+	uint8_t msg[REPORT_SIZE]; // Outgoing message to USB interface task
 
 } KeystrokeReport;
 /* USER CODE END ET */
