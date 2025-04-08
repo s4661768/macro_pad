@@ -42,8 +42,9 @@ extern "C" {
 /* USER CODE BEGIN ET */
 
 #define KEYBOARD_REPORT_ID 0x01
-#define REPORT_SIZE 9
-typedef struct KeystrokeReport{
+#define MEDIA_REPORT_ID 0x03
+#define REPORT_SIZE 11
+typedef struct KeystrokeReport {
 
 	uint8_t mod;
 	uint8_t res;
@@ -53,10 +54,30 @@ typedef struct KeystrokeReport{
 	uint8_t k4;
 	uint8_t k5;
 	uint8_t k6;
+	uint8_t c0;
 
 	uint8_t msg[REPORT_SIZE]; // Outgoing message to USB interface task
 
 } KeystrokeReport;
+
+
+
+#define GENERIC_REPORT_SIZE 9
+
+typedef struct GenericReport {
+
+	uint8_t reportId;   // 0x01 | 0x03
+	uint8_t r0;  		// Mod  | report
+	uint8_t r1;  		// Res  | -
+	uint8_t r2;  		// k1   | -
+	uint8_t r3;  		// k2   | -
+	uint8_t r4;  		// k3   | -
+	uint8_t r5;  		// k4   | -
+	uint8_t r6;  		// k5   | -
+	uint8_t r7;  		// k6   | -
+
+	uint8_t msg[GENERIC_REPORT_SIZE]; // Outgoing message to USB interface task
+} GenericReport;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/

@@ -81,10 +81,16 @@ void UsbSendTaskInit(void const * argument);
 
 /* USER CODE BEGIN PFP */
 void s4661768TaskKeypad();
-void clear_keystroke_report(KeystrokeReport* keystrokeReport);
-void clear_msg(KeystrokeReport* keystrokeReport);
-void build_msg(KeystrokeReport* keystrokeReport);
-void set_keystroke(EventBits_t bits, KeystrokeReport* keystrokeReport, uint8_t layer);
+//void clear_keystroke_report(KeystrokeReport* keystrokeReport);
+//void clear_msg(KeystrokeReport* keystrokeReport);
+//void build_msg(KeystrokeReport* keystrokeReport);
+//void set_keystroke(EventBits_t bits, KeystrokeReport* keystrokeReport, uint8_t layer);
+
+
+void clear_generic_report(GenericReport* genRep);
+void clear_generic_msg(GenericReport* genRep);
+void build_generic_msg(GenericReport* genRep);
+void set_report(EventBits_t bits, GenericReport* genRep, uint8_t layer);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -367,18 +373,36 @@ static void MX_GPIO_Init(void)
  * @param:
  * 	keystrokeReport <KeystrokeReport*>: struct used to hold details of keypress to be reported
  */
-void clear_keystroke_report(KeystrokeReport* keystrokeReport) {
+//void clear_keystroke_report(KeystrokeReport* keystrokeReport) {
+//
+//	clear_msg(keystrokeReport);
+//
+//	keystrokeReport->mod = 0;
+//	keystrokeReport->res = 0;
+//	keystrokeReport->k1 = 0;
+//	keystrokeReport->k2 = 0;
+//	keystrokeReport->k3 = 0;
+//	keystrokeReport->k4 = 0;
+//	keystrokeReport->k5 = 0;
+//	keystrokeReport->k6 = 0;
+//	keystrokeReport->c0 = 0;
+//
+//}
 
-	clear_msg(keystrokeReport);
+void clear_generic_report(GenericReport* genRep) {
 
-	keystrokeReport->mod = 0;
-	keystrokeReport->res = 0;
-	keystrokeReport->k1 = 0;
-	keystrokeReport->k2 = 0;
-	keystrokeReport->k3 = 0;
-	keystrokeReport->k4 = 0;
-	keystrokeReport->k5 = 0;
-	keystrokeReport->k6 = 0;
+	clear_generic_msg(genRep);
+
+	genRep->reportId = 0;
+	genRep->r0 = 0;
+	genRep->r1 = 0;
+	genRep->r2 = 0;
+	genRep->r3 = 0;
+	genRep->r4 = 0;
+	genRep->r5 = 0;
+	genRep->r6 = 0;
+	genRep->r7 = 0;
+
 
 }
 
@@ -389,9 +413,19 @@ void clear_keystroke_report(KeystrokeReport* keystrokeReport) {
  * @param:
  * 	keystrokeReport <KeystrokeReport*>: struct used to hold details of keypress to be reported
  */
-void clear_msg(KeystrokeReport* keystrokeReport) {
-
-//	keystrokeReport->msg[0] = 0;
+//void clear_msg(KeystrokeReport* keystrokeReport) {
+//
+////	keystrokeReport->msg[0] = 0;
+////	keystrokeReport->msg[1] = 0;
+////	keystrokeReport->msg[2] = 0;
+////	keystrokeReport->msg[3] = 0;
+////	keystrokeReport->msg[4] = 0;
+////	keystrokeReport->msg[5] = 0;
+////	keystrokeReport->msg[6] = 0;
+////	keystrokeReport->msg[7] = 0;
+//
+//
+//	/* Clear Keyboard Report */
 //	keystrokeReport->msg[1] = 0;
 //	keystrokeReport->msg[2] = 0;
 //	keystrokeReport->msg[3] = 0;
@@ -399,20 +433,26 @@ void clear_msg(KeystrokeReport* keystrokeReport) {
 //	keystrokeReport->msg[5] = 0;
 //	keystrokeReport->msg[6] = 0;
 //	keystrokeReport->msg[7] = 0;
+//	keystrokeReport->msg[8] = 0;
+//
+//	/* Clear Media Report */
+//	keystrokeReport->msg[10] = 0;
+//
+//}
 
 
+void clear_generic_msg(GenericReport* genRep) {
 
-	keystrokeReport->msg[1] = 0;
-	keystrokeReport->msg[2] = 0;
-	keystrokeReport->msg[3] = 0;
-	keystrokeReport->msg[4] = 0;
-	keystrokeReport->msg[5] = 0;
-	keystrokeReport->msg[6] = 0;
-	keystrokeReport->msg[7] = 0;
-	keystrokeReport->msg[8] = 0;
-
+	/* Clear everything but the report ID */
+	genRep->msg[1] = 0;
+	genRep->msg[2] = 0;
+	genRep->msg[3] = 0;
+	genRep->msg[4] = 0;
+	genRep->msg[5] = 0;
+	genRep->msg[6] = 0;
+	genRep->msg[7] = 0;
+	genRep->msg[8] = 0;
 }
-
 
 /**
  * This function populates the msg attribute of the given KeystrokeReport struct using the other
@@ -421,83 +461,116 @@ void clear_msg(KeystrokeReport* keystrokeReport) {
  * @param:
  * 	keystrokeReport <KeystrokeReport*>: struct used to hold details of keypress to be reported
  */
-void build_msg(KeystrokeReport* keystrokeReport) {
+//void build_msg(KeystrokeReport* keystrokeReport) {
+//
+////	keystrokeReport->msg[0] = keystrokeReport->mod;
+////	keystrokeReport->msg[1] = keystrokeReport->res;
+////	keystrokeReport->msg[2] = keystrokeReport->k1;
+////	keystrokeReport->msg[3] = keystrokeReport->k2;
+////	keystrokeReport->msg[4] = keystrokeReport->k3;
+////	keystrokeReport->msg[5] = keystrokeReport->k4;
+////	keystrokeReport->msg[6] = keystrokeReport->k5;
+////	keystrokeReport->msg[7] = keystrokeReport->k6;
+//
+//	/* Set Keyboard Report */
+//	keystrokeReport->msg[0] = KEYBOARD_REPORT_ID;
+// 	keystrokeReport->msg[1] = keystrokeReport->mod;
+//	keystrokeReport->msg[2] = keystrokeReport->res;
+//	keystrokeReport->msg[3] = keystrokeReport->k1;
+//	keystrokeReport->msg[4] = keystrokeReport->k2;
+//	keystrokeReport->msg[5] = keystrokeReport->k3;
+//	keystrokeReport->msg[6] = keystrokeReport->k4;
+//	keystrokeReport->msg[7] = keystrokeReport->k5;
+//	keystrokeReport->msg[8] = keystrokeReport->k6;
+//
+//	/* Set Media Report */
+//	keystrokeReport->msg[9] = MEDIA_REPORT_ID;
+//	keystrokeReport->msg[10] = keystrokeReport->c0;
+//
+//}
 
-//	keystrokeReport->msg[0] = keystrokeReport->mod;
-//	keystrokeReport->msg[1] = keystrokeReport->res;
-//	keystrokeReport->msg[2] = keystrokeReport->k1;
-//	keystrokeReport->msg[3] = keystrokeReport->k2;
-//	keystrokeReport->msg[4] = keystrokeReport->k3;
-//	keystrokeReport->msg[5] = keystrokeReport->k4;
-//	keystrokeReport->msg[6] = keystrokeReport->k5;
-//	keystrokeReport->msg[7] = keystrokeReport->k6;
 
-	keystrokeReport->msg[0] = KEYBOARD_REPORT_ID;
- 	keystrokeReport->msg[1] = keystrokeReport->mod;
-	keystrokeReport->msg[2] = keystrokeReport->res;
-	keystrokeReport->msg[3] = keystrokeReport->k1;
-	keystrokeReport->msg[4] = keystrokeReport->k2;
-	keystrokeReport->msg[5] = keystrokeReport->k3;
-	keystrokeReport->msg[6] = keystrokeReport->k4;
-	keystrokeReport->msg[7] = keystrokeReport->k5;
-	keystrokeReport->msg[8] = keystrokeReport->k6;
+void build_generic_msg(GenericReport* genRep) {
+
+	/* Set Keyboard Report */
+	genRep->msg[0] = genRep->reportId;
+	genRep->msg[1] = genRep->r0;
+	genRep->msg[2] = genRep->r1;
+	genRep->msg[3] = genRep->r2;
+	genRep->msg[4] = genRep->r3;
+	genRep->msg[5] = genRep->r4;
+	genRep->msg[6] = genRep->r5;
+	genRep->msg[7] = genRep->r6;
+	genRep->msg[8] = genRep->r7;
 
 }
 
 
-void set_keystroke(EventBits_t key, KeystrokeReport* keystrokeReport, uint8_t layer) {
-	uint8_t mute[2] = {0x03, 0x10};
-	uint8_t vol_up[2] = {0x03, 0x20};
-	uint8_t vol_down[2] = {0x03, 0x40};
-	uint8_t stop[2] = {0x03, 0x00};
+void set_report(EventBits_t key, GenericReport* genRep, uint8_t layer) {
+//	uint8_t mute[2] = {0x03, 0x10};
+//	uint8_t vol_up[2] = {0x03, 0x20};
+//	uint8_t vol_down[2] = {0x03, 0x40};
+//	uint8_t stop[2] = {0x03, 0x00};
 
 	if (layer == 0) {
 
 		switch (key) {
 
+
 			case KEY0:
-				keystrokeReport->k1 = 0x04;
+				genRep->reportId = KEYBOARD_REPORT_ID;
+				genRep->r2 = 0x04;
 				break;
 
 			case KEY1:
-				keystrokeReport->k1 = 0x05;
+				genRep->reportId = KEYBOARD_REPORT_ID;
+				genRep->r2= 0x05;
 				break;
 
 			case KEY2:
-				keystrokeReport->k1 = 0x06;
+				genRep->reportId = KEYBOARD_REPORT_ID;
+				genRep->r2 = 0x06;
 				break;
 
 			case KEY4:
-				keystrokeReport->k1 = 0x07;
+				genRep->reportId = KEYBOARD_REPORT_ID;
+				genRep->r2 = 0x07;
 				break;
 
 			case KEY5:
-				keystrokeReport->k1 = 0x08;
+				genRep->reportId = KEYBOARD_REPORT_ID;
+				genRep->r2 = 0x08;
 				break;
 
 			case KEY6:
-				keystrokeReport->k1 = 0x09;
+				genRep->reportId = KEYBOARD_REPORT_ID;
+				genRep->r2 = 0x09;
 				break;
 
 			case KEY8:
-				keystrokeReport->k1 = 0x0A;
+				genRep->reportId = KEYBOARD_REPORT_ID;
+				genRep->r2= 0x0A;
 				break;
 
 			case KEY9:
-				keystrokeReport->k1 = 0x0B;
+				genRep->reportId = KEYBOARD_REPORT_ID;
+				genRep->r2 = 0x0B;
 				break;
 
 			case KEY10:
-				keystrokeReport->k1 = 0x0C;
+				genRep->reportId = KEYBOARD_REPORT_ID;
+				genRep->r2 = 0x0C;
 				break;
 
 			case KEY12:
-				keystrokeReport->k1 = 0x29;
+				genRep->reportId = KEYBOARD_REPORT_ID;
+				genRep->r2 = 0x29;
 				break;
 
 			case KEY13:
-				keystrokeReport->mod = (0x04 | 0x01);
-				keystrokeReport->k1 = 0x2B;
+				genRep->reportId = KEYBOARD_REPORT_ID;
+				genRep->r0 = (0x04 | 0x01);
+				genRep->r2 = 0x2B;
 				break;
 		}
 
@@ -511,63 +584,76 @@ void set_keystroke(EventBits_t key, KeystrokeReport* keystrokeReport, uint8_t la
 //				keystrokeReport->k1 = 0xE2;
 
 
-				USBD_HID_SendReport(&hUsbDeviceFS, mute, sizeof(mute));
-				USBD_HID_SendReport(&hUsbDeviceFS, stop, sizeof(stop));
+//				USBD_HID_SendReport(&hUsbDeviceFS, mute, sizeof(mute));
+				genRep->reportId = 0x03;
+				genRep->r0 = 0x10;
 				break;
 
 			case KEY1:
 //				keystrokeReport->mod = 0x02;
 //				keystrokeReport->k1 = 0x05;
 //				keystrokeReport->k1 = 0xE9;
-				USBD_HID_SendReport(&hUsbDeviceFS, vol_up, sizeof(vol_up));
-				USBD_HID_SendReport(&hUsbDeviceFS, stop, sizeof(stop));
+//				USBD_HID_SendReport(&hUsbDeviceFS, vol_up, sizeof(vol_up));
+//				USBD_HID_SendReport(&hUsbDeviceFS, stop, sizeof(stop));
+				genRep->reportId = 0x03;
+				genRep->r0  = 0x20;
 				break;
 
 			case KEY2:
 //				keystrokeReport->mod = 0x02;
 //				keystrokeReport->k1 = 0x06;
 //				keystrokeReport->k1 = 0xEA;
-				USBD_HID_SendReport(&hUsbDeviceFS, vol_down, sizeof(vol_down));
-				USBD_HID_SendReport(&hUsbDeviceFS, stop, sizeof(stop));
+//				USBD_HID_SendReport(&hUsbDeviceFS, vol_down, sizeof(vol_down));
+//				USBD_HID_SendReport(&hUsbDeviceFS, stop, sizeof(stop));
+				genRep->reportId = MEDIA_REPORT_ID;
+				genRep->r0 = 0x40;
 				break;
 
 			case KEY4:
-				keystrokeReport->mod = 0x02;
-				keystrokeReport->k1 = 0x07;
+				genRep->reportId = KEYBOARD_REPORT_ID;
+				genRep->r0 = 0x02;
+				genRep->r2 = 0x07;
 				break;
 
 			case KEY5:
-				keystrokeReport->mod = 0x02;
-				keystrokeReport->k1 = 0x08;
+				genRep->reportId = KEYBOARD_REPORT_ID;
+				genRep->r0 = 0x02;
+				genRep->r2 = 0x08;
 				break;
 
 			case KEY6:
-				keystrokeReport->mod = 0x02;
-				keystrokeReport->k1 = 0x09;
+				genRep->reportId = KEYBOARD_REPORT_ID;
+				genRep->r0 = 0x02;
+				genRep->r2 = 0x09;
 				break;
 
 			case KEY8:
-				keystrokeReport->mod = 0x02;
-				keystrokeReport->k1 = 0x0A;
+				genRep->reportId = KEYBOARD_REPORT_ID;
+				genRep->r0 = 0x02;
+				genRep->r2 = 0x0A;
 				break;
 
 			case KEY9:
-				keystrokeReport->mod = 0x02;
-				keystrokeReport->k1 = 0x0B;
+				genRep->reportId = KEYBOARD_REPORT_ID;
+				genRep->r0 = 0x02;
+				genRep->r2 = 0x0B;
 				break;
 
 			case KEY10:
-				keystrokeReport->mod = 0x02;
-				keystrokeReport->k1 = 0x0C;
+				genRep->reportId = KEYBOARD_REPORT_ID;
+				genRep->r0= 0x02;
+				genRep->r2 = 0x0C;
 				break;
 
 			case KEY12:
-				keystrokeReport->k1 = 0x29;
+				genRep->reportId = KEYBOARD_REPORT_ID;
+				genRep->r2 = 0x29;
 				break;
 
 			case KEY13:
-				keystrokeReport->mod = (0x04 | 0x01);
-				keystrokeReport->k1 = 0x2B;
+				genRep->reportId = KEYBOARD_REPORT_ID;
+				genRep->r0 = (0x04 | 0x01);
+				genRep->r2= 0x2B;
 				break;
 		}
 	}
@@ -684,81 +770,6 @@ void s4661768TaskKeypad() {
                 taskEXIT_CRITICAL();
             }
         }
-
-
-
-
-
-
-
-
-
-
-//    for (;;) {
-//
-//        s4661768_reg_keypad_fsmprocessing();
-//        vTaskDelay(20);
-//
-//        if (s4661768_reg_keypad_read_status() == 1) { // If there was a key press
-//
-//            keypress = s4661768_reg_keypad_read_key();
-//
-//            taskENTER_CRITICAL();
-//            switch (keypress) {
-//                case 0x00:
-//                    xEventGroupSetBits(Keypad, KEY0);
-//                    break;
-//
-//                case 0x01:
-//                    xEventGroupSetBits(Keypad, KEY1);
-//                    break;
-//
-//                case 0x02:
-//                    xEventGroupSetBits(Keypad, KEY2);
-//                    break;
-//
-//                case 0x04:
-//                    xEventGroupSetBits(Keypad, KEY4);
-//                    break;
-//
-//                case 0x05:
-//                    xEventGroupSetBits(Keypad, KEY5);
-//                    break;
-//
-//                case 0x06:
-//                    xEventGroupSetBits(Keypad, KEY6);
-//                    break;
-//
-//                case 0x08:
-//                    xEventGroupSetBits(Keypad, KEY8);
-//                    break;
-//
-//                case 0x09:
-//                    xEventGroupSetBits(Keypad, KEY9);
-//                    break;
-//
-//                case 0x0A:
-//                    xEventGroupSetBits(Keypad, KEY10);
-//                    break;
-//
-//                case 0x0C:
-//                    xEventGroupSetBits(Keypad, KEY12);
-//                    break;
-//
-//                case 0x0D:
-//                    xEventGroupSetBits(Keypad, KEY13);
-//                    break;
-//
-//                case 0x0E:
-//                    xEventGroupSetBits(Keypad, KEY14);
-//                    break;
-//
-//            }
-//
-//            keypress = 0xFF; // Clearing keypress variable
-//            taskEXIT_CRITICAL();
-//        }
-//    }
 }
 
 
@@ -828,106 +839,111 @@ void s4661768TaskOled() {
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void const * argument)
 {
-  /* init code for USB_DEVICE */
-  MX_USB_DEVICE_Init();
-  /* USER CODE BEGIN 5 */
+	/* init code for USB_DEVICE */
+	MX_USB_DEVICE_Init();
+	/* USER CODE BEGIN 5 */
 	uint8_t layer = 0;
 	EventBits_t key;
-	KeystrokeReport keystrokeReport;
+//	KeystrokeReport keystrokeReport;
+	GenericReport genRep;
 	Oled oledStruct;
-	clear_keystroke_report(&keystrokeReport);
+//	clear_keystroke_report(&keystrokeReport);
+	clear_generic_report(&genRep);
 	char oledMsg[21];
 	uint8_t lines[12] = {0, 11, 127, 11,
-					 84, 0, 84, 10};
+					 	 84, 0, 84, 10};
 	uint8_t welcome = 1;
 
 	/* Infinite loop */
   	for(;;) {
-	/* Making sure event group exists before attempting to use it */
-	if (Keypad == NULL) { continue; }
+		/* Making sure event group exists before attempting to use it */
+		if (Keypad == NULL) { continue; }
 
-	/* Boot up screen */
-	if ((welcome == 1) && (OledQueue != NULL)) {
+		/* Boot up screen */
+		if ((welcome == 1) && (OledQueue != NULL)) {
 
-		  oledStruct.string = "Hello User.";
-		  oledStruct.stringCoords[0] = 15;
-		  oledStruct.stringCoords[1] = 10;
-		  xQueueSend(OledQueue, &oledStruct, 5);
+			  oledStruct.string = "Hello User.";
+			  oledStruct.stringCoords[0] = 15;
+			  oledStruct.stringCoords[1] = 10;
+			  xQueueSend(OledQueue, &oledStruct, 5);
 
-		  oledStruct.string = "Your MacroPad Is";
-		  oledStruct.stringCoords[0] = 15;
-		  oledStruct.stringCoords[1] = 20;
-		  xQueueSend(OledQueue, &oledStruct, 5);
+			  oledStruct.string = "Your MacroPad Is";
+			  oledStruct.stringCoords[0] = 15;
+			  oledStruct.stringCoords[1] = 20;
+			  xQueueSend(OledQueue, &oledStruct, 5);
 
-		  oledStruct.string = "Ready.";
-		  oledStruct.stringCoords[0] = 15;
-		  oledStruct.stringCoords[1] = 30;
-		  xQueueSend(OledQueue, &oledStruct, 5);
+			  oledStruct.string = "Ready.";
+			  oledStruct.stringCoords[0] = 15;
+			  oledStruct.stringCoords[1] = 30;
+			  xQueueSend(OledQueue, &oledStruct, 5);
 
-		  oledStruct.update = 1;
-		  xQueueSend(OledQueue, &oledStruct, 5);
+			  oledStruct.update = 1;
+			  xQueueSend(OledQueue, &oledStruct, 5);
 
 
-		  welcome++;
+			  welcome++;
 
-	}
+		}
 
-	vTaskDelay(60);
+		vTaskDelay(60);
 
-	key = 0;
-	key = xEventGroupWaitBits(Keypad, KEYBOARD_KEYS | KEY14, pdTRUE, pdFALSE, 10);
+		key = 0;
+		key = xEventGroupWaitBits(Keypad, KEYBOARD_KEYS | KEY14, pdTRUE, pdFALSE, 10);
 
-	if (key == 0) {
+		if (key == 0) {
 
-	  continue;
+		  continue;
 
-	} else if (key == KEY14) {
+		} else if (key == KEY14) {
 
-	  layer = ((layer + 1) % 2);
+		  layer = ((layer + 1) % 2);
 
-	  /* Sending new layer information to OLED task */
-	  if (OledQueue != NULL) {
-		  oledStruct.clear = 1;
-		  xQueueSend(OledQueue, &oledStruct, 1);
+		  /* Sending new layer information to OLED task */
+		  if (OledQueue != NULL) {
+			  oledStruct.clear = 1;
+			  xQueueSend(OledQueue, &oledStruct, 1);
 
-		  memset(oledMsg, '\0', sizeof(oledMsg));
-		  sprintf(oledMsg, "L%d: Media     v0.0.1", layer);
-		  oledStruct.string = oledMsg;
-		  oledStruct.stringCoords[0] = 5;
-		  oledStruct.stringCoords[1] = 0;
+			  memset(oledMsg, '\0', sizeof(oledMsg));
+			  sprintf(oledMsg, "L%d: Media     v0.0.1", layer);
+			  oledStruct.string = oledMsg;
+			  oledStruct.stringCoords[0] = 5;
+			  oledStruct.stringCoords[1] = 0;
 
-		  oledStruct.lines = lines;
-		  oledStruct.linesLength = 8;
+			  oledStruct.lines = lines;
+			  oledStruct.linesLength = 8;
 
-		  oledStruct.update = 1;
-		  xQueueSend(OledQueue, &oledStruct, 1);
+			  oledStruct.update = 1;
+			  xQueueSend(OledQueue, &oledStruct, 1);
 
-	  }
+		  }
+		  continue;
+		}
 
-	  continue;
-
-	}
-
-	set_keystroke(key, &keystrokeReport, layer);
+		set_report(key, &genRep, layer);
 
 
 
-	if (UsbQueue == NULL) {
+		if (UsbQueue == NULL) {
 
-	 clear_keystroke_report(&keystrokeReport);
-	 continue;
+//		 clear_keystroke_report(&keystrokeReport);
 
-	}
-	/* Send keystroke */
-	build_msg(&keystrokeReport);
-	xQueueSend(UsbQueue, &keystrokeReport.msg, 5);
+			clear_generic_report(&genRep);
+			continue;
+		}
+		/* Send keystroke */
+//		build_msg(&keystrokeReport);
+		build_generic_msg(&genRep);
+		xQueueSend(UsbQueue, &genRep.msg, 5);
 
-	/* clear keystroke and send no key press */
-	clear_keystroke_report(&keystrokeReport);
-	build_msg(&keystrokeReport);
-	xQueueSend(UsbQueue, &keystrokeReport.msg, 5);
-	osDelay(10); // Wait and send again just in case packet was missed.
-	xQueueSend(UsbQueue, &keystrokeReport.msg, 5);
+		/* clear keystroke and send no key press */
+//		clear_keystroke_report(&keystrokeReport);I
+		clear_generic_msg(&genRep);
+//		build_msg(&keystrokeReport);
+//		build_generic_msg(&genRep);
+		xQueueSend(UsbQueue, &genRep.msg, 5);
+		osDelay(10); // Wait and send again just in case packet was missed.
+		xQueueSend(UsbQueue, &genRep.msg, 5);
+		clear_generic_report(&genRep);
 	}
   /* USER CODE END 5 */
 }
@@ -943,8 +959,8 @@ void UsbSendTaskInit(void const * argument)
 {
   /* USER CODE BEGIN UsbSendTaskInit */
 
-	UsbQueue = xQueueCreate(4, 8);
-	uint8_t msg[REPORT_SIZE] = {0};
+	UsbQueue = xQueueCreate(4, GENERIC_REPORT_SIZE);
+	uint8_t msg[GENERIC_REPORT_SIZE] = {0};
   /* Infinite loop */
   for(;;) {
 
