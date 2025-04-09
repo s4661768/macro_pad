@@ -43,29 +43,39 @@ extern "C" {
 
 #define KEYBOARD_REPORT_ID 0x01
 #define MEDIA_REPORT_ID 0x03
-#define REPORT_SIZE 11
-typedef struct KeystrokeReport {
-
-	uint8_t mod;
-	uint8_t res;
-	uint8_t k1;
-	uint8_t k2;
-	uint8_t k3;
-	uint8_t k4;
-	uint8_t k5;
-	uint8_t k6;
-	uint8_t c0;
-
-	uint8_t msg[REPORT_SIZE]; // Outgoing message to USB interface task
-
-} KeystrokeReport;
-
-
-
 #define GENERIC_REPORT_SIZE 9
 
+/**
+ *  This Struct is holds the variables that are to be reported to the computer over
+ *  USB.
+ *
+ * Use the following functions to manipulate an instance of this struct:
+ * 		void clear_generic_report(GenericReport* genRep);
+ * 		void clear_generic_msg(GenericReport* genRep);
+ * 		void build_generic_msg(GenericReport* genRep);
+ * 		void set_report(EventBits_t bits, GenericReport* genRep, uint8_t layer);
+ *
+ * */
 typedef struct GenericReport {
-
+	/*
+	 * A USB report follows this format where each element is a byte:
+	 * 		[ reportId | Modifier | Reserved | Key1 | Key2 | Key3 | Key4 | Key5 | Key6 ]
+	 *
+	 * A Consumer Controller (Media) report follows this format:
+	 * 		[ reportId | flags ]
+	 *
+	 * 	The flags byte is a group of 7 flags using the least significant bits of the byte.
+	 * 		Bit 0: Next Track
+	 * 		Bit 1: Previous Track
+	 * 		Bit 2: Stop
+	 * 		Bit 3: Play / Pause
+	 * 		Bit 4: Mute
+	 * 		Bit 5: Volume Up
+	 * 		Bit 6: Volume Down
+	 *
+	 * A USB report must be followed by a report that clears the previous key. This is done
+	 * so that the computer 'releases' the keystroke to prevent spamming.
+	 * */
 	uint8_t reportId;   // 0x01 | 0x03
 	uint8_t r0;  		// Mod  | report
 	uint8_t r1;  		// Res  | -

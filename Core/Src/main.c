@@ -81,11 +81,6 @@ void UsbSendTaskInit(void const * argument);
 
 /* USER CODE BEGIN PFP */
 void s4661768TaskKeypad();
-//void clear_keystroke_report(KeystrokeReport* keystrokeReport);
-//void clear_msg(KeystrokeReport* keystrokeReport);
-//void build_msg(KeystrokeReport* keystrokeReport);
-//void set_keystroke(EventBits_t bits, KeystrokeReport* keystrokeReport, uint8_t layer);
-
 
 void clear_generic_report(GenericReport* genRep);
 void clear_generic_msg(GenericReport* genRep);
@@ -129,8 +124,6 @@ int main(void)
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  uint8_t reportPress[8] = { 0x02, 0, 0x04, 0x05, 0x06, 0, 0, 0};
-  uint8_t reportRelease[8] = { 0, 0, 0, 0, 0, 0, 0, 0};
 
   /* USER CODE END 2 */
 
@@ -176,22 +169,6 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	//	  HIDkeyBoard.MODIFIER = 0x02; // Means 'Shift' key is being pressed
-	//	  HIDkeyBoard.KEYCODE1 = 0X04; // Sends 'A'
-	//	  HIDkeyBoard.KEYCODE2 = 0X05; // Sends 'B'
-	//	  HIDkeyBoard.KEYCODE3 = 0X06; // Sends 'C'
-	//	  USBD_HID_SendReport(&hUsbDeviceFS, &HIDkeyBoard, sizeof(HIDkeyBoard));
-	  USBD_HID_SendReport(&hUsbDeviceFS, reportPress, sizeof(reportPress));
-	  HAL_Delay(50);
-
-	  /* Clear everything to send released key press*/
-	//	  HIDkeyBoard.MODIFIER = 0x00;
-	//	  HIDkeyBoard.KEYCODE1 = 0X00;
-	//	  HIDkeyBoard.KEYCODE2 = 0X00;
-	//	  HIDkeyBoard.KEYCODE3 = 0X00;
-	  USBD_HID_SendReport(&hUsbDeviceFS, reportRelease, sizeof(reportRelease));
-
-	  HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }
@@ -368,27 +345,11 @@ static void MX_GPIO_Init(void)
 
 
 /**
- * This function clears all attributes of the given KeystrokeReport struct.
+ * This function clears all attributes of the given GenericReport struct.
  *
  * @param:
- * 	keystrokeReport <KeystrokeReport*>: struct used to hold details of keypress to be reported
+ * 	genRep <GenericReport*>: struct used to hold data to be reported over USB.
  */
-//void clear_keystroke_report(KeystrokeReport* keystrokeReport) {
-//
-//	clear_msg(keystrokeReport);
-//
-//	keystrokeReport->mod = 0;
-//	keystrokeReport->res = 0;
-//	keystrokeReport->k1 = 0;
-//	keystrokeReport->k2 = 0;
-//	keystrokeReport->k3 = 0;
-//	keystrokeReport->k4 = 0;
-//	keystrokeReport->k5 = 0;
-//	keystrokeReport->k6 = 0;
-//	keystrokeReport->c0 = 0;
-//
-//}
-
 void clear_generic_report(GenericReport* genRep) {
 
 	clear_generic_msg(genRep);
@@ -403,44 +364,18 @@ void clear_generic_report(GenericReport* genRep) {
 	genRep->r6 = 0;
 	genRep->r7 = 0;
 
-
 }
 
 
 /**
- * This function clears the msg attribute of the given KeystrokeReport struct.
+ * This function clears the msg attribute of the given GenericReport struct.
+ *
+ * NOTE" This method does not clear the reportId attribute of GenericReport. To
+ * clear the reportId you must use clear_generic_report() and build_generic_msg().
  *
  * @param:
- * 	keystrokeReport <KeystrokeReport*>: struct used to hold details of keypress to be reported
+ * 	genRep <GenericReport*>: struct used to hold data to be reported over USB.
  */
-//void clear_msg(KeystrokeReport* keystrokeReport) {
-//
-////	keystrokeReport->msg[0] = 0;
-////	keystrokeReport->msg[1] = 0;
-////	keystrokeReport->msg[2] = 0;
-////	keystrokeReport->msg[3] = 0;
-////	keystrokeReport->msg[4] = 0;
-////	keystrokeReport->msg[5] = 0;
-////	keystrokeReport->msg[6] = 0;
-////	keystrokeReport->msg[7] = 0;
-//
-//
-//	/* Clear Keyboard Report */
-//	keystrokeReport->msg[1] = 0;
-//	keystrokeReport->msg[2] = 0;
-//	keystrokeReport->msg[3] = 0;
-//	keystrokeReport->msg[4] = 0;
-//	keystrokeReport->msg[5] = 0;
-//	keystrokeReport->msg[6] = 0;
-//	keystrokeReport->msg[7] = 0;
-//	keystrokeReport->msg[8] = 0;
-//
-//	/* Clear Media Report */
-//	keystrokeReport->msg[10] = 0;
-//
-//}
-
-
 void clear_generic_msg(GenericReport* genRep) {
 
 	/* Clear everything but the report ID */
@@ -454,42 +389,14 @@ void clear_generic_msg(GenericReport* genRep) {
 	genRep->msg[8] = 0;
 }
 
+
 /**
- * This function populates the msg attribute of the given KeystrokeReport struct using the other
+ * This function populates the msg attribute of the given GenericReport struct using the other
  * attributes.
  *
  * @param:
- * 	keystrokeReport <KeystrokeReport*>: struct used to hold details of keypress to be reported
+ * 	genRep <GenericReport*>: struct used to hold data to be reported over USB.
  */
-//void build_msg(KeystrokeReport* keystrokeReport) {
-//
-////	keystrokeReport->msg[0] = keystrokeReport->mod;
-////	keystrokeReport->msg[1] = keystrokeReport->res;
-////	keystrokeReport->msg[2] = keystrokeReport->k1;
-////	keystrokeReport->msg[3] = keystrokeReport->k2;
-////	keystrokeReport->msg[4] = keystrokeReport->k3;
-////	keystrokeReport->msg[5] = keystrokeReport->k4;
-////	keystrokeReport->msg[6] = keystrokeReport->k5;
-////	keystrokeReport->msg[7] = keystrokeReport->k6;
-//
-//	/* Set Keyboard Report */
-//	keystrokeReport->msg[0] = KEYBOARD_REPORT_ID;
-// 	keystrokeReport->msg[1] = keystrokeReport->mod;
-//	keystrokeReport->msg[2] = keystrokeReport->res;
-//	keystrokeReport->msg[3] = keystrokeReport->k1;
-//	keystrokeReport->msg[4] = keystrokeReport->k2;
-//	keystrokeReport->msg[5] = keystrokeReport->k3;
-//	keystrokeReport->msg[6] = keystrokeReport->k4;
-//	keystrokeReport->msg[7] = keystrokeReport->k5;
-//	keystrokeReport->msg[8] = keystrokeReport->k6;
-//
-//	/* Set Media Report */
-//	keystrokeReport->msg[9] = MEDIA_REPORT_ID;
-//	keystrokeReport->msg[10] = keystrokeReport->c0;
-//
-//}
-
-
 void build_generic_msg(GenericReport* genRep) {
 
 	/* Set Keyboard Report */
@@ -506,11 +413,17 @@ void build_generic_msg(GenericReport* genRep) {
 }
 
 
+/**
+ * This functions takes the event bits and generates the GenericReport according to the event bits
+ *
+ * This is where the layer mapping is defined.
+ *
+ * @param:
+ *  key <EventBits_t>: Event bits variable showing what key has been pressed.
+ * 	genRep <GenericReport*>: struct used to hold data to be reported over USB.
+ * 	layer <uint8_t>: current layer number
+ * */
 void set_report(EventBits_t key, GenericReport* genRep, uint8_t layer) {
-//	uint8_t mute[2] = {0x03, 0x10};
-//	uint8_t vol_up[2] = {0x03, 0x20};
-//	uint8_t vol_down[2] = {0x03, 0x40};
-//	uint8_t stop[2] = {0x03, 0x00};
 
 	if (layer == 0) {
 
@@ -579,32 +492,17 @@ void set_report(EventBits_t key, GenericReport* genRep, uint8_t layer) {
 		switch (key) {
 
 			case KEY0:
-//				keystrokeReport->mod = 0x02;
-//				keystrokeReport->k1 = 0x04;
-//				keystrokeReport->k1 = 0xE2;
-
-
-//				USBD_HID_SendReport(&hUsbDeviceFS, mute, sizeof(mute));
 				genRep->reportId = 0x03;
 				genRep->r0 = 0x10;
 				break;
 
 			case KEY1:
-//				keystrokeReport->mod = 0x02;
-//				keystrokeReport->k1 = 0x05;
-//				keystrokeReport->k1 = 0xE9;
-//				USBD_HID_SendReport(&hUsbDeviceFS, vol_up, sizeof(vol_up));
-//				USBD_HID_SendReport(&hUsbDeviceFS, stop, sizeof(stop));
 				genRep->reportId = 0x03;
 				genRep->r0  = 0x20;
 				break;
 
 			case KEY2:
-//				keystrokeReport->mod = 0x02;
-//				keystrokeReport->k1 = 0x06;
-//				keystrokeReport->k1 = 0xEA;
-//				USBD_HID_SendReport(&hUsbDeviceFS, vol_down, sizeof(vol_down));
-//				USBD_HID_SendReport(&hUsbDeviceFS, stop, sizeof(stop));
+
 				genRep->reportId = MEDIA_REPORT_ID;
 				genRep->r0 = 0x40;
 				break;
@@ -844,10 +742,8 @@ void StartDefaultTask(void const * argument)
 	/* USER CODE BEGIN 5 */
 	uint8_t layer = 0;
 	EventBits_t key;
-//	KeystrokeReport keystrokeReport;
 	GenericReport genRep;
 	Oled oledStruct;
-//	clear_keystroke_report(&keystrokeReport);
 	clear_generic_report(&genRep);
 	char oledMsg[21];
 	uint8_t lines[12] = {0, 11, 127, 11,
@@ -925,21 +821,16 @@ void StartDefaultTask(void const * argument)
 
 		if (UsbQueue == NULL) {
 
-//		 clear_keystroke_report(&keystrokeReport);
-
 			clear_generic_report(&genRep);
 			continue;
 		}
+
 		/* Send keystroke */
-//		build_msg(&keystrokeReport);
 		build_generic_msg(&genRep);
 		xQueueSend(UsbQueue, &genRep.msg, 5);
 
 		/* clear keystroke and send no key press */
-//		clear_keystroke_report(&keystrokeReport);I
 		clear_generic_msg(&genRep);
-//		build_msg(&keystrokeReport);
-//		build_generic_msg(&genRep);
 		xQueueSend(UsbQueue, &genRep.msg, 5);
 		osDelay(10); // Wait and send again just in case packet was missed.
 		xQueueSend(UsbQueue, &genRep.msg, 5);
